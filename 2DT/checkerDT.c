@@ -10,7 +10,24 @@
 #include "dynarray.h"
 #include "path.h"
 
+boolean CheckerDT_checkForDuplicates(Node_T oNNode, Node_T oNRoot) {
+    if (oNNode == NULL || oNRoot == NULL) return TRUE;
 
+    if (oNNode != oNRoot && Path_comparePath(Node_getPath(oNNode), Node_getPath(oNRoot)) == 0) {
+        fprintf(stderr, "Duplicate node found in tree: %s\n", Path_getPathname(Node_getPath(oNNode)));
+        return FALSE;
+    }
+
+    size_t numChildren = Node_getNumChildren(oNRoot);
+    for (size_t ulIndex = 0; ulIndex < numChildren; ulIndex++) {
+        Node_T oNChild;
+        if (Node_getChild(oNRoot, ulIndex, &oNChild) == SUCCESS) {
+            if (!CheckerDT_checkForDuplicates(oNNode, oNChild)) return FALSE;
+        }
+    }
+
+    return TRUE;
+}
 
 /* see checkerDT.h for specification */
 boolean CheckerDT_Node_isValid(Node_T oNNode) {
@@ -66,7 +83,35 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
          }
       }
    }
-   
+
+   for (size_t ulIndex = 0; ulIndex < Node_getNumChildren(oNNode); ulIndex++) {
+    Node_T oNChild;
+    int iStatus = Node_getChild(oNNode, ulIndex, &oNChild);
+    if (iStatus != SUCCESS || oNChild == NULL) {
+        fprintf(stderr, "Error retrieving child node\n");
+        return FALSE;
+    }
+
+    Path_T oPChildPath = Node_getPath(oNChild);
+    Path_T oPNodePath = Node_getPath(oNNode);
+
+    // Check if the child's path is a direct extension of the node's path
+    if (Path_getSharedPrefixDepth(oPChildPath, oPNodePath) != Path_getDepth(oPNodePath)) {
+        fprintf(stderr, "Child's path is not a direct extension of the node's path\n");
+        return FALSE;
+    }
+      }
+
+/* Check the integrity of the dynamic array */
+   DynArray_T oDynArray = Node_getChildrenArray(oNNode);
+      if (oDynArray != NULL) {
+      if (DynArray_getLength(oDynArray) != Node_getNumChildren(oNNode)) {
+        fprintf(stderr, "Dynamic array length does not match the number of children\n");
+        return FALSE;
+    }
+   }
+
+
    return TRUE;
 }
 
