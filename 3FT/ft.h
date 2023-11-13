@@ -57,7 +57,8 @@ int FT_rmDir(const char *pcPath);
    * BAD_PATH if pcPath does not represent a well-formatted path
    * CONFLICTING_PATH if the root exists but is not a prefix of pcPath,
                       or if the new file would be the FT root
-   * NOT_A_DIRECTORY if a proper prefix of pcPath exists as a file
+   * NOT_A_FILE if a proper prefix of pcPath exists as a directory
+                not a file
    * ALREADY_IN_TREE if pcPath is already in the FT (as dir or file)
    * MEMORY_ERROR if memory could not be allocated to complete request
 */
