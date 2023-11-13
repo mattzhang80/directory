@@ -3,12 +3,12 @@ Assignment 4 readme File
 ------------------------------------------------------------------------
 Student 1: What is your name?
 
-
+Alex Delistathis
 
 ------------------------------------------------------------------------
 Student 2: What is your name?
 
-
+Matt Zhang
 
 ------------------------------------------------------------------------
 Student 1: What authorized sources of information did you use to
@@ -117,21 +117,25 @@ the error manifests itself or is "noticed" by the client.
 
       Executable         Function with the underlying error
 ===============================================================
-         ./bdtBad1        
+         ./bdtBad1		    BDT_insert()
 ---------------------------------------------------------------
-         ./bdtBad2        
+         ./bdtBad2		    BDT_rm()
 ---------------------------------------------------------------
-         ./bdtBad3        
+         ./bdtBad3                  BDT_insert()
 ---------------------------------------------------------------
-         ./bdtBad4        
+         ./bdtBad4                  BDT_toString()
 ---------------------------------------------------------------
-         ./bdtBad5        
+         ./bdtBad5                  BDT_destroy()
 ===============================================================
 
 ------------------------------------------------------------------------
 What are your critiques of the given DT implementations, as
 specified in Step 2.5?
 
-
-
+"checkerDT.h":
+  - The second sentence of the comments for the CheckerDT_Node_isValid
+    declaration and the CheckerDT_isValid declaration
+    should be more specific in what type of 'explanation'
+    is provided
+  - 
 ------------------------------------------------------------------------

@@ -30,7 +30,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult);
 
 /*
   Destroys and frees all memory allocated for the subtree rooted at
-  oNNode, i.e., deletes this node and all its descendents. Returns the
+  oNNode, i.e., deletes this node and all its descendants. Returns the
   number of nodes deleted.
 */
 size_t Node_free(Node_T oNNode);

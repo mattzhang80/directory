@@ -34,7 +34,7 @@ boolean DT_contains(const char *pcPath);
 
 /*
   Removes the DT hierarchy (subtree) from the directory with absolute
-  path path pcPath. Returns SUCCESS if found and removed.
+  path pcPath. Returns SUCCESS if found and removed.
   Otherwise, returns:
   * INITIALIZATION_ERROR if the DT is not in an initialized state
   * BAD_PATH if pcPath does not represent a well-formatted path

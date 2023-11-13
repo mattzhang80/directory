@@ -17,7 +17,12 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
    Node_T oNParent;
    Path_T oPNPath;
    Path_T oPPPath;
-
+   size_t ulIndex;
+   size_t numChildren;
+   Node_T oNChild;
+   Path_T oPPath1;
+   Path_T oPPath2;
+   
    /* Sample check: a NULL pointer is not a valid node */
    if(oNNode == NULL) {
       fprintf(stderr, "A node is a NULL pointer\n");
@@ -39,6 +44,29 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
       }
    }
 
+   /* Check: Same node must not appear more than once in the same
+      subtree. */
+   if (oNParent != NULL)
+   {
+      numChildren = Node_getNumChildren(oNParent);
+      oPPath1 = Node_getPath(oNNode);
+      for (ulIndex = 0; ulIndex < numChildren; ulIndex++)
+      {
+         int iStatus = Node_getChild(oNParent, ulIndex, &oNChild);
+         
+         if (iStatus == SUCCESS)
+         {
+            oPPath2 = Node_getPath(oNChild);
+            if (Path_comparePath(oPPath1, oPPath2) == 0 && oPPath1
+                != oPPath2)
+            {
+               fprintf(stderr, "Same node appears more than once in tree: (%s)\n", Node_toString(oNNode));
+               return FALSE;
+            }
+         }
+      }
+   }
+   
    return TRUE;
 }
 
@@ -46,14 +74,13 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
    Performs a pre-order traversal of the tree rooted at oNNode.
    Returns FALSE if a broken invariant is found and
    returns TRUE otherwise.
-
-   You may want to change this function's return type or
-   parameter list to facilitate constructing your checks.
-   If you do, you should update this function comment.
 */
 static boolean CheckerDT_treeCheck(Node_T oNNode) {
-   size_t ulIndex;
-
+   size_t ulIndex1;
+   size_t ulIndex2;
+   Path_T oPPath1;
+   Path_T oPPath2;
+   
    if(oNNode!= NULL) {
 
       /* Sample check on each node: node must be valid */
@@ -62,19 +89,42 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
          return FALSE;
 
       /* Recur on every child of oNNode */
-      for(ulIndex = 0; ulIndex < Node_getNumChildren(oNNode); ulIndex++)
+      for(ulIndex1 = 0; ulIndex1 < Node_getNumChildren(oNNode); ulIndex1++)
       {
-         Node_T oNChild = NULL;
-         int iStatus = Node_getChild(oNNode, ulIndex, &oNChild);
+         Node_T oNChild1 = NULL;
+         Node_T oNChild2 = NULL;
+         int iStatus = Node_getChild(oNNode, ulIndex1, &oNChild1);
 
          if(iStatus != SUCCESS) {
             fprintf(stderr, "getNumChildren claims more children than getChild returns\n");
             return FALSE;
          }
 
+         for (ulIndex2 = ulIndex1 + 1; ulIndex2 < Node_getNumChildren(oNNode); ulIndex2++)
+         {
+            iStatus = Node_getChild(oNNode, ulIndex2, &oNChild2);
+            if (iStatus != SUCCESS)
+            {
+               fprintf(stderr, "getNumChildren claims more children than getChild returns\n");
+               return FALSE;
+            }
+
+            oPPath1 = Node_getPath(oNChild1);
+            oPPath2 = Node_getPath(oNChild2);
+
+            if (Path_comparePath(oPPath1, oPPath2) > 0)
+            {
+               fprintf(stderr, "Children are not in lexicographic order: (%s) (%s)\n",
+                       Path_getPathname(oPPath1),
+                       Path_getPathname(oPPath2));
+               return FALSE;
+            }
+         }
+         
+         
          /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
-         if(!CheckerDT_treeCheck(oNChild))
+         if(!CheckerDT_treeCheck(oNChild1))
             return FALSE;
       }
    }
